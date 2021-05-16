@@ -2,6 +2,7 @@ name: flutter_ui_presenter
 description: A Flutter package project to present mobile's ui over the web/destop.
 version: 0.0.1
 homepage:
+repository: https://github.com/adriano-moreira/flutter_ui_presenter
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
