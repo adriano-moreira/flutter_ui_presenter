@@ -1,4 +1,55 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+Widget withDevFrame(Widget app) => DevFrame(app: app);
+
+class DevFrame extends StatefulWidget {
+  final Widget app;
+
+  const DevFrame({
+    Key? key,
+    required this.app,
+  }) : super(key: key);
+
+  @override
+  State<DevFrame> createState() => _DevFrameState();
+}
+
+class _DevFrameState extends State<DevFrame> {
+  final device = _deviceMotoE4;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            ),
+          ),
+          child: ScrollConfiguration(
+            behavior: MaterialScrollBehavior().copyWith(
+              platform: device.platform,
+              dragDevices: PointerDeviceKind.values.toSet(),
+            ),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                platform: device.platform,
+              ),
+              child: SizedBox(
+                width: device.screenSize.width,
+                height: device.screenSize.height,
+                child: widget.app,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class Device {
   final String name;
@@ -14,13 +65,31 @@ class Device {
   });
 }
 
+const _deviceMotoE4 = Device(
+  name: 'Moto E4',
+  platform: TargetPlatform.android,
+  screenSize: Size(360, 592),
+  screenPadding: EdgeInsets.only(top: 24),
+);
+
+const _sansungJ7Prime = Device(
+  name: 'Sansung galaxy j7 prime',
+  platform: TargetPlatform.android,
+  screenSize: Size(360, 640),
+  screenPadding: EdgeInsets.only(top: 24),
+);
+
+const _pocoX3 = Device(
+  name: 'POCO X3',
+  platform: TargetPlatform.android,
+  screenSize: Size(392.7, 872.7),
+  screenPadding: EdgeInsets.only(top: 33.1),
+);
+
 const _devices = <Device>[
-  Device(
-    name: 'Moto E4',
-    platform: TargetPlatform.android,
-    screenSize: Size(360, 592),
-    screenPadding: EdgeInsets.only(top: 24),
-  ),
+  _deviceMotoE4,
+  _sansungJ7Prime,
+  _pocoX3,
   Device(
     name: 'iPhone 5/5S/SE(2015)',
     platform: TargetPlatform.iOS,
@@ -62,6 +131,7 @@ class Template {
     required this.builder,
   });
 }
+
 class UIPresenter extends StatefulWidget {
   final List<Device> devices;
   final List<Template> templates;
@@ -98,7 +168,9 @@ class _UIPresenterState extends State<UIPresenter> {
         child: Row(
           children: [
             _buildTemplates(),
-            Flexible(child: _buildBody()),
+            Flexible(
+              child: _buildBody(),
+            ),
             _buildDevices(),
           ],
         ),
@@ -124,41 +196,26 @@ class _UIPresenterState extends State<UIPresenter> {
                 child: Row(
                   children: [
                     Spacer(),
-                    buildViewPort(_duration, widget.lightTheme ?? ThemeData.light()),
+                    ViewPort(
+                      duration: _duration,
+                      themeData: widget.lightTheme ?? ThemeData.light(),
+                      device: device,
+                      template: template,
+                    ),
                     SizedBox(
                       width: 30,
                     ),
-                    buildViewPort(_duration, widget.darkTheme ?? ThemeData.dark()),
+                    ViewPort(
+                      duration: _duration,
+                      themeData: widget.darkTheme ?? ThemeData.dark(),
+                      device: device,
+                      template: template,
+                    ),
                     Spacer(),
                   ],
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildViewPort(Duration _duration, ThemeData themeData) {
-    return FittedBox(
-      child: AnimatedContainer(
-        duration: _duration,
-        decoration: BoxDecoration(border: Border.all()),
-        width: device.screenSize.width,
-        height: device.screenSize.height,
-        child: MediaQuery(
-          data: MediaQueryData(
-            size: device.screenSize,
-            padding: device.screenPadding,
-          ),
-          child: MaterialApp(
-            home: Theme(
-              data: themeData.copyWith(platform: device.platform),
-              child: Builder(builder: (context) {
-                return template.builder(context);
-              }),
-            ),
           ),
         ),
       ),
@@ -215,6 +272,79 @@ class _UIPresenterState extends State<UIPresenter> {
                 title: Text(template.name),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ViewPort extends StatelessWidget {
+  const ViewPort({
+    Key? key,
+    required this.template,
+    required this.duration,
+    required this.themeData,
+    required this.device,
+  }) : super(key: key);
+
+  final Template template;
+  final Duration duration;
+  final ThemeData themeData;
+  final Device device;
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      child: AnimatedContainer(
+        duration: duration,
+        decoration: BoxDecoration(
+          border: Border.all(),
+        ),
+        width: device.screenSize.width,
+        height: device.screenSize.height,
+        child: MaterialApp(
+          scrollBehavior: MaterialScrollBehavior().copyWith(
+            platform: device.platform,
+            dragDevices: PointerDeviceKind.values.toSet(),
+          ),
+          home: MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              size: device.screenSize,
+              padding: device.screenPadding,
+            ),
+            child: Theme(
+              data: themeData.copyWith(platform: device.platform),
+              child: Stack(
+                children: [
+                  Builder(
+                    builder: (context) => Container(
+                      child: template.builder(context),
+                    ),
+                  ),
+                  if (device.screenPadding.top != 0)
+                    Positioned(
+                      top: 0,
+                      child: AnimatedContainer(
+                        duration: duration,
+                        color: Colors.black.withOpacity(.5),
+                        width: device.screenSize.width,
+                        height: device.screenPadding.top,
+                      ),
+                    ),
+                  if (device.screenPadding.bottom != 0)
+                    Positioned(
+                      bottom: 0,
+                      child: AnimatedContainer(
+                        duration: duration,
+                        color: Colors.black.withOpacity(.5),
+                        width: device.screenSize.width,
+                        height: device.screenPadding.bottom,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

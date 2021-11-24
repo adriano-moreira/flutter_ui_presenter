@@ -1,3 +1,5 @@
+import 'package:example/src/counter_page.dart';
+import 'package:example/src/scroll_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ui_presenter/flutter_ui_presenter.dart';
 
@@ -18,6 +20,14 @@ class MyApp extends StatelessWidget {
           Template(
             name: 'Template 2',
             builder: (context) => Template2(),
+          ),
+          Template(
+            name: 'Counter',
+            builder: (context) => CounterPage(),
+          ),
+          Template(
+            name: 'Scroll',
+            builder: (context) => ScrollPage(),
           ),
         ],
       ),
