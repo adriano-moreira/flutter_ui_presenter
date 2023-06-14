@@ -1,19 +1,18 @@
 name: flutter_ui_presenter
 description: A Flutter package to help mobile developer present UI over the web/destop.
 version: 0.0.3
-homepage:
+homepage: ...
 repository: https://github.com/adriano-moreira/flutter_ui_presenter
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: ">=3.0.2 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class CounterPage extends StatefulWidget {
   const CounterPage({
-    Key? key,
+    super.key,
     this.title = 'Flutter Demo Home Page',
-  }) : super(key: key);
+  });
 
   final String title;
 
@@ -36,7 +36,7 @@ class _CounterPageState extends State<CounterPage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),

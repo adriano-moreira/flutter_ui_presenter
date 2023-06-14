@@ -11,12 +11,11 @@ class _Item {
 }
 
 class _ItemWidget extends StatelessWidget {
-  final _Item item;
-
   const _ItemWidget({
-    Key? key,
     required this.item,
-  }) : super(key: key);
+  });
+
+  final _Item item;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class _ItemWidget extends StatelessWidget {
 }
 
 class ScrollPage extends StatelessWidget {
-  const ScrollPage({Key? key}) : super(key: key);
+  const ScrollPage({super.key});
 
   @override
   Widget build(BuildContext context) {

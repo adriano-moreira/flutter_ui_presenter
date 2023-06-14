@@ -1,7 +1,8 @@
-import 'package:example/src/counter_page.dart';
-import 'package:example/src/scroll_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ui_presenter/flutter_ui_presenter.dart';
+
+import 'src/counter_page.dart';
+import 'src/scroll_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -49,7 +50,20 @@ class Template1 extends StatelessWidget {
   }
 }
 
-class Template2 extends StatelessWidget {
+class Template2 extends StatefulWidget {
+  @override
+  State<Template2> createState() => _Template2State();
+}
+
+class _Template2State extends State<Template2> {
+  var _switchValue = true;
+
+  void toggle() {
+    setState(() {
+      _switchValue = !_switchValue;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +77,7 @@ class Template2 extends StatelessWidget {
             CircularProgressIndicator.adaptive(),
             Switch.adaptive(
               value: true,
-              onChanged: (value) {},
+              onChanged: (value) => toggle(),
             ),
           ],
         ),

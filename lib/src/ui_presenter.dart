@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 Widget withDevFrame(Widget app) => DevFrame(app: app);
 
 class DevFrame extends StatefulWidget {
-  final Widget app;
-
   const DevFrame({
-    Key? key,
+    super.key,
     required this.app,
-  }) : super(key: key);
+  });
+
+  final Widget app;
 
   @override
   State<DevFrame> createState() => _DevFrameState();
@@ -30,7 +30,7 @@ class _DevFrameState extends State<DevFrame> {
             ),
           ),
           child: ScrollConfiguration(
-            behavior: MaterialScrollBehavior().copyWith(
+            behavior: const MaterialScrollBehavior().copyWith(
               platform: device.platform,
               dragDevices: PointerDeviceKind.values.toSet(),
             ),
@@ -138,7 +138,7 @@ class UIPresenter extends StatefulWidget {
   final ThemeData? lightTheme;
   final ThemeData? darkTheme;
 
-  UIPresenter({
+  const UIPresenter({
     Key? key,
     this.devices = _devices,
     this.lightTheme,
@@ -147,7 +147,7 @@ class UIPresenter extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _UIPresenterState createState() => _UIPresenterState();
+  State<UIPresenter> createState() => _UIPresenterState();
 }
 
 class _UIPresenterState extends State<UIPresenter> {
@@ -164,59 +164,55 @@ class _UIPresenterState extends State<UIPresenter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Row(
-          children: [
-            _buildTemplates(),
-            Flexible(
-              child: _buildBody(),
-            ),
-            _buildDevices(),
-          ],
-        ),
+      body: Row(
+        children: [
+          _buildTemplates(),
+          Flexible(
+            child: _buildBody(),
+          ),
+          _buildDevices(),
+        ],
       ),
     );
   }
 
   Widget _buildBody() {
-    var _duration = Duration(seconds: 1);
-    return Container(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Container(
-                height: 50,
-                child: Center(
-                  child: Text('${device.name} - ${device.screenSize}'),
-                ),
+    var duration = const Duration(seconds: 1);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 50,
+              child: Center(
+                child: Text('${device.name} - ${device.screenSize}'),
               ),
-              Flexible(
-                child: Row(
-                  children: [
-                    Spacer(),
-                    ViewPort(
-                      duration: _duration,
-                      themeData: widget.lightTheme ?? ThemeData.light(),
-                      device: device,
-                      template: template,
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    ViewPort(
-                      duration: _duration,
-                      themeData: widget.darkTheme ?? ThemeData.dark(),
-                      device: device,
-                      template: template,
-                    ),
-                    Spacer(),
-                  ],
-                ),
+            ),
+            Flexible(
+              child: Row(
+                children: [
+                  const Spacer(),
+                  ViewPort(
+                    duration: duration,
+                    themeData: widget.lightTheme ?? ThemeData.light(),
+                    device: device,
+                    template: template,
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                  ViewPort(
+                    duration: duration,
+                    themeData: widget.darkTheme ?? ThemeData.dark(),
+                    device: device,
+                    template: template,
+                  ),
+                  const Spacer(),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -248,9 +244,13 @@ class _UIPresenterState extends State<UIPresenter> {
   }
 
   Widget getDeviceIcon(Device device) {
-    if (device.platform == TargetPlatform.android) return Icon(Icons.android);
-    if (device.platform == TargetPlatform.iOS) return Text('iOS');
-    return Container();
+    if (device.platform == TargetPlatform.android) {
+      return const Icon(Icons.android);
+    }
+    if (device.platform == TargetPlatform.iOS) {
+      return const Text('iOS');
+    }
+    return const SizedBox();
   }
 
   Widget _buildTemplates() {
@@ -262,7 +262,7 @@ class _UIPresenterState extends State<UIPresenter> {
           children: [
             for (final template in widget.templates)
               ListTile(
-                leading: Icon(Icons.insert_drive_file_rounded),
+                leading: const Icon(Icons.insert_drive_file_rounded),
                 selected: this.template == template,
                 onTap: () {
                   setState(() {
@@ -303,7 +303,7 @@ class ViewPort extends StatelessWidget {
         width: device.screenSize.width,
         height: device.screenSize.height,
         child: MaterialApp(
-          scrollBehavior: MaterialScrollBehavior().copyWith(
+          scrollBehavior: const MaterialScrollBehavior().copyWith(
             platform: device.platform,
             dragDevices: PointerDeviceKind.values.toSet(),
           ),
