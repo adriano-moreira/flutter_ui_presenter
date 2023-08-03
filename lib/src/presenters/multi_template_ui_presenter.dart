@@ -1,8 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'device.dart';
+import 'devices.dart';
+
 Widget withDevFrame(Widget app) => DevFrame(app: app);
 
+/// A single DeviceViewPortWrapper
 class DevFrame extends StatefulWidget {
   const DevFrame({
     super.key,
@@ -16,7 +20,7 @@ class DevFrame extends StatefulWidget {
 }
 
 class _DevFrameState extends State<DevFrame> {
-  final device = _deviceMotoE4;
+  final device = deviceMotoE4;
 
   @override
   Widget build(BuildContext context) {
@@ -51,76 +55,6 @@ class _DevFrameState extends State<DevFrame> {
   }
 }
 
-class Device {
-  final String name;
-  final TargetPlatform platform;
-  final Size screenSize;
-  final EdgeInsets screenPadding;
-
-  const Device({
-    required this.name,
-    required this.platform,
-    required this.screenSize,
-    required this.screenPadding,
-  });
-}
-
-const _deviceMotoE4 = Device(
-  name: 'Moto E4',
-  platform: TargetPlatform.android,
-  screenSize: Size(360, 592),
-  screenPadding: EdgeInsets.only(top: 24),
-);
-
-const _sansungJ7Prime = Device(
-  name: 'Sansung galaxy j7 prime',
-  platform: TargetPlatform.android,
-  screenSize: Size(360, 640),
-  screenPadding: EdgeInsets.only(top: 24),
-);
-
-const _pocoX3 = Device(
-  name: 'POCO X3',
-  platform: TargetPlatform.android,
-  screenSize: Size(392.7, 872.7),
-  screenPadding: EdgeInsets.only(top: 33.1),
-);
-
-const _devices = <Device>[
-  _deviceMotoE4,
-  _sansungJ7Prime,
-  _pocoX3,
-  Device(
-    name: 'iPhone 5/5S/SE(2015)',
-    platform: TargetPlatform.iOS,
-    screenSize: Size(320, 568),
-    screenPadding: EdgeInsets.only(top: 20),
-  ),
-  Device(
-    name: 'iPhone 6/7/8/SE(2020)',
-    platform: TargetPlatform.iOS,
-    screenSize: Size(357, 667),
-    screenPadding: EdgeInsets.only(top: 20),
-  ),
-  Device(
-    name: 'iPhone 6/7/8 Plus',
-    platform: TargetPlatform.iOS,
-    screenSize: Size(414, 736),
-    screenPadding: EdgeInsets.only(top: 20),
-  ),
-  Device(
-    name: 'iPhone 12 mini',
-    platform: TargetPlatform.iOS,
-    screenSize: Size(375, 812),
-    screenPadding: EdgeInsets.only(top: 50, bottom: 34),
-  ),
-  Device(
-    name: 'iPhone 12 Pro Max',
-    platform: TargetPlatform.iOS,
-    screenSize: Size(428, 926),
-    screenPadding: EdgeInsets.only(top: 47, bottom: 34),
-  ),
-];
 
 class Template {
   final String name;
@@ -132,15 +66,48 @@ class Template {
   });
 }
 
+class MultiDevice extends StatelessWidget {
+  final List<Device> devices = [deviceMotoE4, pocoX3, deviceIPhoneSE2015];
+  final Template template;
+
+  MultiDevice({
+    super.key,
+    // required this.devices,
+    required this.template,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var device in devices)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ViewPort(
+                  template: template,
+                  duration: Duration.zero,
+                  themeData: ThemeData.light(useMaterial3: false),
+                  device: device,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class UIPresenter extends StatefulWidget {
-  final List<Device> devices;
   final List<Template> templates;
   final ThemeData? lightTheme;
   final ThemeData? darkTheme;
 
   const UIPresenter({
     Key? key,
-    this.devices = _devices,
     this.lightTheme,
     this.darkTheme,
     required this.templates,
@@ -157,7 +124,7 @@ class _UIPresenterState extends State<UIPresenter> {
   @override
   void initState() {
     super.initState();
-    device = widget.devices.first;
+    device = devices.first;
     template = widget.templates.first;
   }
 
@@ -224,9 +191,9 @@ class _UIPresenterState extends State<UIPresenter> {
       child: SizedBox(
         width: 260,
         child: ListView.builder(
-          itemCount: widget.devices.length,
+          itemCount: devices.length,
           itemBuilder: (ctx, i) {
-            final device = widget.devices[i];
+            final device = devices[i];
             return ListTile(
               selected: this.device == device,
               onTap: () {
@@ -285,12 +252,14 @@ class ViewPort extends StatelessWidget {
     required this.duration,
     required this.themeData,
     required this.device,
+    this.showDeviceLabel = false
   }) : super(key: key);
 
   final Template template;
   final Duration duration;
   final ThemeData themeData;
   final Device device;
+  final bool showDeviceLabel;
 
   @override
   Widget build(BuildContext context) {

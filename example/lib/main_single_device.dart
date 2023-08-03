@@ -5,7 +5,7 @@ import 'src/scroll_page.dart';
 
 void main() {
   runApp(
-    withDevFrame(
+    UiPresenter.withSingleDevice(
       ScrollPage(),
     ),
   );
