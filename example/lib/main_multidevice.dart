@@ -3,9 +3,9 @@ import 'package:flutter_ui_presenter/flutter_ui_presenter.dart';
 import 'src/scroll_page.dart';
 
 void main() {
-  runPresenterSingleDevice(
+  runPresenterMultiDevice(
     template: Template(
-      name: '',
+      name: 'Page',
       builder: (_) => ScrollPage(),
     ),
   );

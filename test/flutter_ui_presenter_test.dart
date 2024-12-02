@@ -5,8 +5,8 @@ import 'package:flutter_ui_presenter/flutter_ui_presenter.dart';
 void main() {
   testWidgets('DevFrame', (tester) async {
     await tester.pumpWidget(
-      const DevFrame(
-        app: Scaffold(
+      UiPresenter.withMultiDevice(
+        const Scaffold(
           body: Center(
             child: Text('bar'),
           ),

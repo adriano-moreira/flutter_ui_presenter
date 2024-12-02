@@ -5,36 +5,26 @@ import 'src/counter_page.dart';
 import 'src/scroll_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runUiPresenter(templates: [
+    Template(
+      name: 'Template 1',
+      builder: (context) => Template1(),
+    ),
+    Template(
+      name: 'Template 2',
+      builder: (context) => Template2(),
+    ),
+    Template(
+      name: 'Counter',
+      builder: (context) => CounterPage(),
+    ),
+    Template(
+      name: 'Scroll',
+      builder: (context) => ScrollPage(),
+    ),
+  ]);
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: UIPresenter(
-        templates: [
-          Template(
-            name: 'Template 1',
-            builder: (context) => Template1(),
-          ),
-          Template(
-            name: 'Template 2',
-            builder: (context) => Template2(),
-          ),
-          Template(
-            name: 'Counter',
-            builder: (context) => CounterPage(),
-          ),
-          Template(
-            name: 'Scroll',
-            builder: (context) => ScrollPage(),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class Template1 extends StatelessWidget {
   @override

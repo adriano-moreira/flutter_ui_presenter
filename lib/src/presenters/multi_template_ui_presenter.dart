@@ -1,112 +1,16 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'device.dart';
-import 'devices.dart';
+import '../device.dart';
+import '../devices.dart';
+import '../template.dart';
+import 'device_viewport.dart';
 
-Widget withDevFrame(Widget app) => DevFrame(app: app);
-
-/// A single DeviceViewPortWrapper
-class DevFrame extends StatefulWidget {
-  const DevFrame({
-    super.key,
-    required this.app,
-  });
-
-  final Widget app;
-
-  @override
-  State<DevFrame> createState() => _DevFrameState();
-}
-
-class _DevFrameState extends State<DevFrame> {
-  final device = deviceMotoE4;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            ),
-          ),
-          child: ScrollConfiguration(
-            behavior: const MaterialScrollBehavior().copyWith(
-              platform: device.platform,
-              dragDevices: PointerDeviceKind.values.toSet(),
-            ),
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                platform: device.platform,
-              ),
-              child: SizedBox(
-                width: device.screenSize.width,
-                height: device.screenSize.height,
-                child: widget.app,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class Template {
-  final String name;
-  final WidgetBuilder builder;
-
-  Template({
-    required this.name,
-    required this.builder,
-  });
-}
-
-class MultiDevice extends StatelessWidget {
-  final List<Device> devices = [deviceMotoE4, pocoX3, deviceIPhoneSE2015];
-  final Template template;
-
-  MultiDevice({
-    super.key,
-    // required this.devices,
-    required this.template,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (var device in devices)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ViewPort(
-                  template: template,
-                  duration: Duration.zero,
-                  themeData: ThemeData.light(useMaterial3: false),
-                  device: device,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class UIPresenter extends StatefulWidget {
+class MultiTemplate extends StatefulWidget {
   final List<Template> templates;
   final ThemeData? lightTheme;
   final ThemeData? darkTheme;
 
-  const UIPresenter({
+  const MultiTemplate({
     Key? key,
     this.lightTheme,
     this.darkTheme,
@@ -114,10 +18,10 @@ class UIPresenter extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<UIPresenter> createState() => _UIPresenterState();
+  State<MultiTemplate> createState() => _MultiTemplateState();
 }
 
-class _UIPresenterState extends State<UIPresenter> {
+class _MultiTemplateState extends State<MultiTemplate> {
   late Device device;
   late Template template;
 
@@ -239,81 +143,6 @@ class _UIPresenterState extends State<UIPresenter> {
                 title: Text(template.name),
               ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ViewPort extends StatelessWidget {
-  const ViewPort({
-    Key? key,
-    required this.template,
-    required this.duration,
-    required this.themeData,
-    required this.device,
-    this.showDeviceLabel = false
-  }) : super(key: key);
-
-  final Template template;
-  final Duration duration;
-  final ThemeData themeData;
-  final Device device;
-  final bool showDeviceLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return FittedBox(
-      child: AnimatedContainer(
-        duration: duration,
-        decoration: BoxDecoration(
-          border: Border.all(),
-        ),
-        width: device.screenSize.width,
-        height: device.screenSize.height,
-        child: MaterialApp(
-          scrollBehavior: const MaterialScrollBehavior().copyWith(
-            platform: device.platform,
-            dragDevices: PointerDeviceKind.values.toSet(),
-          ),
-          home: MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              size: device.screenSize,
-              padding: device.screenPadding,
-            ),
-            child: Theme(
-              data: themeData.copyWith(platform: device.platform),
-              child: Stack(
-                children: [
-                  Builder(
-                    builder: (context) => Container(
-                      child: template.builder(context),
-                    ),
-                  ),
-                  if (device.screenPadding.top != 0)
-                    Positioned(
-                      top: 0,
-                      child: AnimatedContainer(
-                        duration: duration,
-                        color: Colors.black.withOpacity(.5),
-                        width: device.screenSize.width,
-                        height: device.screenPadding.top,
-                      ),
-                    ),
-                  if (device.screenPadding.bottom != 0)
-                    Positioned(
-                      bottom: 0,
-                      child: AnimatedContainer(
-                        duration: duration,
-                        color: Colors.black.withOpacity(.5),
-                        width: device.screenSize.width,
-                        height: device.screenPadding.bottom,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
         ),
       ),
     );
